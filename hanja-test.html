@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>나의 한자 실력 테스트 | 汉韩桥</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;700;900&family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&display=swap');
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  :root {
+    --vermillion: #c23a2b;
+    --vermillion-dark: #9a2e22;
+    --gold: #c9a84c;
+    --gold-light: #e6cf7e;
+    --ink: #1a1a18;
+    --ink-light: #3d3d3a;
+    --paper: #f5efe6;
+    --paper-dark: #e8dfd0;
+    --wood: #5c3a1e;
+    --wood-light: #8b5e34;
+    --text: #2c1810;
+    --text-light: #7a6a5a;
+    --success: #2d7842;
+    --error: #b3342a;
+    --shadow: 0 8px 40px rgba(44,24,16,.1);
+  }
+
+  body {
+    font-family: 'Noto Sans KR', -apple-system, sans-serif;
+    background: var(--paper);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position:relative;
+  }
+
+  /* Aged paper texture overlay */
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139,94,52,.02) 2px, rgba(139,94,52,.02) 4px);
+    pointer-events:none; z-index:0;
+  }
+
+  /* ── Decorative cloud pattern ── */
+  .cloud-bg {
+    position:fixed; inset:0;
+    overflow:hidden; pointer-events:none; z-index:0;
+  }
+  .cloud-bg .cloud {
+    position:absolute;
+    width:200px; height:80px;
+    background:radial-gradient(ellipse at center, rgba(201,168,76,.06) 0%, transparent 70%);
+    border-radius:50%;
+  }
+  .cloud-bg .cloud:nth-child(1) { top:8%; left:-5%; width:300px; height:100px; }
+  .cloud-bg .cloud:nth-child(2) { top:15%; right:-3%; width:250px; height:80px; }
+  .cloud-bg .cloud:nth-child(3) { top:55%; left:-8%; width:280px; height:90px; }
+  .cloud-bg .cloud:nth-child(4) { bottom:10%; right:-5%; width:350px; height:110px; }
+
+  /* ── Decorative border frame ── */
+  .frame-border {
+    position:fixed; inset:10px; pointer-events:none; z-index:0;
+    border:1px solid rgba(201,168,76,.15);
+    border-radius:24px;
+  }
+  .frame-border::before, .frame-border::after {
+    content:'◆';
+    position:absolute;
+    font-size:14px; color:rgba(201,168,76,.25);
+  }
+  .frame-border::before { top:-7px; left:-7px; }
+  .frame-border::after { bottom:-7px; right:-7px; }
+  .frame-corner-tl, .frame-corner-tr, .frame-corner-bl, .frame-corner-br {
+    position:fixed; width:40px; height:40px;
+    border-color:rgba(201,168,76,.2);
+    border-style:solid;
+    pointer-events:none; z-index:0;
+  }
+  .frame-corner-tl { top:18px; left:18px; border-width:2px 0 0 2px; border-radius:8px 0 0 0; }
+  .frame-corner-tr { top:18px; right:18px; border-width:2px 2px 0 0; border-radius:0 8px 0 0; }
+  .frame-corner-bl { bottom:18px; left:18px; border-width:0 0 2px 2px; border-radius:0 0 0 8px; }
+  .frame-corner-br { bottom:18px; right:18px; border-width:0 2px 2px 0; border-radius:0 0 8px 0; }
+
+  .container {
+    max-width:480px; margin:0 auto; padding:1.5rem 1rem;
+    min-height:100vh;
+    position:relative; z-index:1;
+  }
+
+  /* ── Splash Screen ── */
+  #splash {
+    position:fixed; inset:0; z-index:100;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background: linear-gradient(160deg, #2c1810 0%, #3d2216 40%, #1a1a18 100%);
+    color:#fff;
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  #splash.hidden { opacity:0; transform:scale(1.05); pointer-events:none; }
+
+  #splash::before {
+    content:'';
+    position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(201,168,76,.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, rgba(194,58,43,.06) 0%, transparent 50%);
+    pointer-events:none;
+  }
+
+  /* Splash seal stamp */
+  .splash-seal {
+    width:120px; height:120px;
+    border:3px solid var(--vermillion);
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:2rem;
+    position:relative;
+    transform:rotate(-3deg);
+  }
+  .splash-seal::before {
+    content:'';
+    position:absolute; inset:6px;
+    border:1px solid rgba(194,58,43,.4);
+    border-radius:4px;
+  }
+  .splash-seal .seal-text {
+    font-family:'Ma Shan Zheng', 'Noto Serif SC', serif;
+    font-size:2.4rem;
+    color:var(--vermillion);
+    letter-spacing:.15em;
+    text-shadow:0 0 20px rgba(194,58,43,.3);
+  }
+  .splash-seal .seal-sub {
+    position:absolute; bottom:-18px;
+    font-family:'ZCOOL XiaoWei', 'Noto Serif SC', serif;
+    font-size:.65rem;
+    color:var(--gold);
+    white-space:nowrap;
+    letter-spacing:.1em;
+  }
+
+  #splash .logo-area {
+    text-align:center; margin-bottom:3rem;
+  }
+  #splash .logo-chinese {
+    font-family:'Ma Shan Zheng', serif;
+    font-size:3.5rem;
+    color:var(--gold);
+    letter-spacing:.12em;
+    line-height:1.2;
+    text-shadow:0 2px 30px rgba(201,168,76,.15);
+  }
+  #splash .logo-sub {
+    font-size:.9rem; color:rgba(255,255,255,.5); font-weight:300;
+    margin-top:.5rem;
+    letter-spacing:.05em;
+  }
+  #splash .badge {
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(201,168,76,.2);
+    border-radius:100px;
+    padding:.5rem 1.2rem;
+    font-size:.8rem;
+    color:var(--gold-light);
+    margin-bottom:2.5rem;
+  }
+  #splash .start-btn {
+    background: var(--vermillion);
+    color:#fff;
+    border:none; border-radius:4px;
+    padding:1rem 3rem; font-size:1.1rem; font-weight:700;
+    cursor:pointer;
+    position:relative;
+    transition: transform .2s, box-shadow .2s;
+    box-shadow:0 4px 20px rgba(194,58,43,.25);
+    letter-spacing:.03em;
+  }
+  #splash .start-btn::before {
+    content:'';
+    position:absolute; inset:3px;
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:2px;
+  }
+  #splash .start-btn:active { transform:scale(.96); }
+  #splash .footer-note { margin-top:2rem; font-size:.7rem; opacity:.25; font-weight:300; }
+
+  /* ── Header ── */
+  .header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:1.2rem 0 .8rem;
+    border-bottom:1px solid rgba(201,168,76,.15);
+    margin-bottom:1.5rem;
+  }
+  .header .brand-wrap {
+    display:flex; align-items:center; gap:.6rem;
+  }
+  .header .brand-seal {
+    width:36px; height:36px;
+    border:2px solid var(--vermillion);
+    border-radius:3px;
+    display:flex; align-items:center; justify-content:center;
+    transform:rotate(-2deg);
+    flex-shrink:0;
+  }
+  .header .brand-seal span {
+    font-family:'Ma Shan Zheng', serif;
+    font-size:.85rem;
+    color:var(--vermillion);
+  }
+  .header .brand-name {
+    font-family:'Noto Serif SC', serif;
+    font-size:1rem; font-weight:700;
+    color:var(--ink);
+    letter-spacing:.05em;
+  }
+  .header .brand-name .gold { color:var(--gold); }
+  .header .progress-text { font-size:.8rem; color:var(--text-light); font-weight:500; }
+
+  /* ── Progress Bar ── */
+  .progress-wrap { position:relative; margin-bottom:2rem; }
+  .progress-track {
+    width:100%; height:4px;
+    background:rgba(201,168,76,.15);
+    border-radius:2px; overflow:hidden;
+  }
+  .progress-fill {
+    height:100%;
+    background: linear-gradient(90deg, var(--vermillion), var(--gold));
+    border-radius:2px;
+    transition: width .5s ease;
+    width:0%;
+  }
+
+  /* ── Question Card ── */
+  .q-card {
+    background: #fffdf9;
+    border-radius:4px;
+    padding:2rem 1.8rem;
+    box-shadow:var(--shadow);
+    margin-bottom:1rem;
+    position:relative;
+    border:1px solid rgba(201,168,76,.1);
+    animation: fadeIn .4s ease;
+  }
+  /* Decorative top line */
+  .q-card::before {
+    content:'';
+    position:absolute; top:0; left:1.5rem; right:1.5rem;
+    height:3px;
+    background: linear-gradient(90deg, var(--vermillion), var(--gold), var(--vermillion));
+    border-radius:0 0 2px 2px;
+  }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)} }
+
+  .q-label-wrap {
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:1rem;
+  }
+  .q-label {
+    font-size:.7rem; font-weight:500; color:var(--text-light);
+    text-transform:uppercase; letter-spacing:.12em;
+  }
+  .q-type {
+    font-size:.65rem;
+    color:var(--vermillion);
+    border:1px solid rgba(194,58,43,.2);
+    padding:.2rem .7rem;
+    border-radius:2px;
+    font-weight:500;
+    letter-spacing:.03em;
+  }
+
+  /* Hanzi Display */
+  .hanzi-box {
+    text-align:center;
+    padding:2.5rem 0 1.5rem;
+    position:relative;
+  }
+  /* Ornamental lines around hanzi */
+  .hanzi-box::before, .hanzi-box::after {
+    content:'';
+    position:absolute; left:50%; transform:translateX(-50%);
+    width:60px; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(201,168,76,.3), transparent);
+  }
+  .hanzi-box::before { top:1rem; }
+  .hanzi-box::after { bottom:.5rem; }
+
+  .hanzi-box .hanzi {
+    font-family:'Noto Serif SC', serif;
+    font-size:5rem; font-weight:700;
+    color:var(--ink);
+    line-height:1.2;
+    text-shadow:0 1px 2px rgba(0,0,0,.05);
+    letter-spacing:.06em;
+  }
+  .hanzi-box .hanzi-main {
+    font-family:'Ma Shan Zheng','Noto Serif SC', serif;
+    font-size:5rem; font-weight:700;
+    color:var(--ink);
+    line-height:1.2;
+    text-shadow:0 1px 2px rgba(0,0,0,.05);
+    letter-spacing:.06em;
+    margin-bottom:.3rem;
+  }
+  .hanzi-simple-wrap {
+    display:flex; align-items:center; justify-content:center; gap:.5rem;
+    margin-bottom:.2rem;
+    font-size:.8rem;
+  }
+  .hanzi-simple-wrap .hanzi-label {
+    font-size:.65rem; color:var(--text-light);
+    font-weight:400;
+  }
+  .hanzi-simple-wrap .hanzi-arrow {
+    font-size:.7rem; color:var(--gold);
+    font-weight:300;
+  }
+  .hanzi-simple-wrap .hanzi-trad {
+    font-family:'Noto Serif SC', serif;
+    font-size:1.1rem; font-weight:700;
+    color:var(--ink);
+  }
+  .hanzi-simple-wrap .hanzi-simple {
+    font-family:'Noto Serif SC', serif;
+    font-size:1.1rem; font-weight:700;
+    color:var(--vermillion);
+  }
+  .hanzi-box .hanja-kr {
+    font-size:1.15rem; color:var(--text-light);
+    margin-top:.2rem;
+    font-weight:400;
+  }
+  .hanzi-box .hint {
+    font-size:.8rem; color:var(--text-light);
+    margin-top:1rem;
+    font-weight:400;
+  }
+
+  /* Reveal area */
+  .reveal-area {
+    display:none;
+    text-align:center;
+    padding:1.2rem;
+    margin:1rem 0 .5rem;
+    background:rgba(201,168,76,.06);
+    border-radius:2px;
+    border:1px solid rgba(201,168,76,.15);
+    position:relative;
+  }
+  .reveal-area.show { display:block; animation:fadeIn .3s ease; }
+  .reveal-area .pinyin {
+    font-size:1.1rem; color:var(--vermillion);
+    margin-bottom:.3rem;
+    font-weight:500;
+  }
+  .reveal-area .meaning { font-size:1rem; color:var(--text); font-weight:500; }
+  .reveal-area .meaning-kr { font-size:.8rem; color:var(--text-light); margin-top:.4rem; line-height:1.5; }
+
+  /* ── Options ── */
+  .options { display:flex; flex-direction:column; gap:.6rem; }
+  .option {
+    display:flex; align-items:center;
+    width:100%; padding:.9rem 1.1rem;
+    background:#faf7f2;
+    border:1px solid rgba(201,168,76,.12);
+    border-radius:2px;
+    font-size:.95rem; font-weight:500; color:var(--text);
+    cursor:pointer; text-align:left;
+    transition: all .2s;
+    position:relative;
+  }
+  .option:hover { background:#f3ede3; border-color:rgba(201,168,76,.25); }
+  .option:active { transform:scale(.98); }
+  .option .label {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:26px; height:26px;
+    border:1px solid rgba(201,168,76,.3);
+    border-radius:2px;
+    color:var(--text-light);
+    font-size:.7rem; font-weight:700; margin-right:.9rem;
+    flex-shrink:0;
+    font-family:'Noto Serif SC', serif;
+    transition: all .2s;
+  }
+  .option.selected { border-color:var(--ink); background:#ede7dd; }
+  .option.selected .label { background:var(--ink); color:#fff; border-color:var(--ink); }
+  .option.correct {
+    border-color:var(--success); background:#edf7f0;
+  }
+  .option.correct .label { background:var(--success); color:#fff; border-color:var(--success); }
+  .option.wrong {
+    border-color:var(--error); background:#fdf0ef;
+  }
+  .option.wrong .label { background:var(--error); color:#fff; border-color:var(--error); }
+  .option.disabled { pointer-events:none; }
+
+  /* ── Next Button ── */
+  .next-btn-wrap { margin-top:1.2rem; text-align:center; }
+  .next-btn {
+    width:100%; padding:.9rem;
+    background: var(--ink);
+    color:var(--gold);
+    border:1px solid rgba(201,168,76,.15);
+    border-radius:2px;
+    font-size:1rem; font-weight:700;
+    cursor:pointer;
+    transition: all .2s;
+    opacity:.3; pointer-events:none;
+    letter-spacing:.05em;
+    position:relative;
+  }
+  .next-btn::before {
+    content:'';
+    position:absolute; inset:3px;
+    border:1px solid rgba(201,168,76,.08);
+    border-radius:1px;
+  }
+  .next-btn.active { opacity:1; pointer-events:auto; }
+  .next-btn.active:hover { background:#2a2a28; }
+  .next-btn:active { transform:scale(.97); }
+
+  /* ── Result Screen ── */
+  #result { display:none; }
+  #result.show { display:block; animation:fadeIn .5s ease; }
+
+  .result-card {
+    background: #fffdf9;
+    border-radius:4px;
+    padding:2rem 1.8rem;
+    box-shadow:var(--shadow);
+    text-align:center;
+    position:relative;
+    border:1px solid rgba(201,168,76,.1);
+  }
+  .result-card::before {
+    content:'';
+    position:absolute; top:0; left:1.5rem; right:1.5rem;
+    height:3px;
+    background: linear-gradient(90deg, var(--vermillion), var(--gold), var(--vermillion));
+    border-radius:0 0 2px 2px;
+  }
+
+  .result-emoji { font-size:3.5rem; margin-bottom:.5rem; }
+
+  .result-score-wrap {
+    position:relative;
+    width:160px; height:160px;
+    margin:1.5rem auto;
+  }
+  .result-score-svg { width:100%; height:100%; transform:rotate(-90deg); }
+  .result-score-svg circle {
+    fill:none; stroke-width:7;
+    cx:80; cy:80; r:68;
+  }
+  .result-score-svg .bg-circle { stroke:rgba(201,168,76,.12); }
+  .result-score-svg .fg-circle {
+    stroke:var(--vermillion);
+    stroke-dasharray: 427.26;
+    stroke-dashoffset: 427.26;
+    stroke-linecap:round;
+    transition: stroke-dashoffset 1.5s ease;
+  }
+  .result-score-num {
+    position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    font-size:2.8rem; font-weight:900; color:var(--ink);
+    line-height:1;
+    letter-spacing:-.03em;
+  }
+  .result-score-num small { font-size:.9rem; font-weight:400; color:var(--text-light); }
+
+  .result-level {
+    font-family:'Noto Serif SC', serif;
+    font-size:1.4rem; font-weight:700;
+    margin-bottom:.3rem;
+    color:var(--ink);
+  }
+  .result-desc {
+    color:var(--text-light); font-size:.85rem; line-height:1.7;
+    margin-bottom:1.5rem;
+    padding:0 .5rem;
+  }
+
+  .result-stat {
+    display:flex; justify-content:center; gap:2.5rem;
+    margin:1.5rem 0;
+    padding:1rem 0;
+    border-top:1px solid rgba(201,168,76,.1);
+    border-bottom:1px solid rgba(201,168,76,.1);
+  }
+  .result-stat-item { text-align:center; }
+  .result-stat-item .num { font-size:1.8rem; font-weight:700; }
+  .result-stat-item .num.green { color:var(--success); }
+  .result-stat-item .num.red { color:var(--error); }
+  .result-stat-item .lbl { font-size:.7rem; color:var(--text-light); margin-top:.2rem; letter-spacing:.05em; }
+
+  .result-hanja-list {
+    text-align:left; margin:1.5rem 0;
+  }
+  .result-hanja-list .title {
+    font-size:.8rem; font-weight:500; color:var(--text-light);
+    margin-bottom:.8rem;
+    letter-spacing:.02em;
+  }
+  .result-hanja-list .items {
+    display:flex; flex-wrap:wrap; gap:.4rem;
+  }
+  .result-hanja-list .tag {
+    display:inline-flex; align-items:center; gap:.3rem;
+    padding:.25rem .7rem;
+    border-radius:2px;
+    font-size:.75rem;
+    font-weight:500;
+  }
+  .result-hanja-list .tag.correct { background:#edf7f0; color:var(--success); }
+  .result-hanja-list .tag.wrong { background:#fdf0ef; color:var(--error); }
+
+  /* ── Share buttons ── */
+  .result-share {
+    display:flex; gap:.7rem; margin:1.2rem 0;
+  }
+  .result-share button {
+    flex:1; padding:.85rem;
+    border:none; border-radius:2px;
+    font-size:.85rem; font-weight:600; cursor:pointer;
+    transition: transform .2s;
+  }
+  .result-share button:active { transform:scale(.96); }
+  .btn-kakao { background:#FEE500; color:#3A1D1D; }
+  .btn-copy { background:var(--paper-dark); color:var(--text); }
+
+  /* ── Lead Capture ── */
+  .lead-form {
+    background: #fffdf9;
+    border-radius:4px;
+    padding:2rem 1.8rem;
+    box-shadow:var(--shadow);
+    margin-top:1rem;
+    border:1px solid rgba(201,168,76,.1);
+    position:relative;
+  }
+  .lead-form::before {
+    content:'';
+    position:absolute; top:0; left:1.5rem; right:1.5rem;
+    height:2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    border-radius:0 0 2px 2px;
+  }
+  .lead-form h3 {
+    font-family:'Noto Serif SC', serif;
+    font-size:1.1rem;
+    margin-bottom:.3rem;
+    color:var(--ink);
+  }
+  .lead-form p {
+    font-size:.8rem; color:var(--text-light);
+    margin-bottom:1.2rem;
+    line-height:1.5;
+  }
+  .lead-form input {
+    width:100%; padding:.85rem 1rem;
+    background:#faf7f2;
+    border:1px solid rgba(201,168,76,.15);
+    border-radius:2px;
+    font-size:.9rem; margin-bottom:.7rem;
+    transition: border-color .2s;
+    font-family:'Noto Sans KR', sans-serif;
+    color:var(--text);
+  }
+  .lead-form input:focus {
+    outline:none; border-color:var(--gold);
+    background:#fcf9f4;
+  }
+  .lead-form input::placeholder { color:var(--text-light); opacity:.6; }
+  .lead-form .submit-btn {
+    width:100%; padding:.9rem;
+    background:var(--vermillion); color:#fff;
+    border:none; border-radius:2px;
+    font-size:.95rem; font-weight:700; cursor:pointer;
+    transition: transform .2s, background .2s;
+    letter-spacing:.02em;
+    position:relative;
+  }
+  .lead-form .submit-btn::before {
+    content:'';
+    position:absolute; inset:3px;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:1px;
+  }
+  .lead-form .submit-btn:active { transform:scale(.97); }
+  .lead-form .submit-btn.loading { opacity:.6; pointer-events:none; }
+  .lead-form .thank-you { display:none; text-align:center; padding:1rem; }
+  .lead-form .thank-you.show { display:block; }
+  .lead-form .thank-you .emoji { font-size:3rem; margin-bottom:.5rem; }
+  .lead-form .thank-you p { font-size:.85rem; color:var(--text); line-height:1.6; }
+
+  /* ── Footer ── */
+  .footer-note {
+    text-align:center;
+    padding:2rem 0 1rem;
+    font-size:.7rem; color:var(--text-light);
+    letter-spacing:.03em;
+  }
+  .footer-note .sep {
+    display:inline-block;
+    width:20px; height:1px;
+    background:rgba(201,168,76,.3);
+    margin:0 .5rem .15rem;
+    vertical-align:middle;
+  }
+  .footer-note a {
+    color:var(--vermillion);
+    text-decoration:none;
+    font-weight:500;
+  }
+  .footer-note .chinese {
+    font-family:'Noto Serif SC', serif;
+  }
+
+  /* Toast */
+  .toast {
+    position:fixed; bottom:2rem; left:50%; transform:translateX(-50%);
+    background:var(--ink); color:var(--gold);
+    padding:.8rem 1.5rem; border-radius:2px;
+    font-size:.8rem; font-weight:500;
+    opacity:0; transition: opacity .3s;
+    pointer-events:none; z-index:200;
+    white-space:nowrap;
+  }
+  .toast.show { opacity:1; }
+
+  /* Ming dynasty decorative seal stamp for result */
+  .seal-stamp {
+    display:inline-block;
+    width:48px; height:48px;
+    border:2px solid var(--vermillion);
+    border-radius:4px;
+    transform:rotate(-5deg);
+    margin:0 auto .5rem;
+  }
+  .seal-stamp .seal-char {
+    font-family:'Ma Shan Zheng', serif;
+    font-size:1.5rem;
+    color:var(--vermillion);
+    line-height:48px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Decorative frame & clouds -->
+<div class="cloud-bg">
+  <div class="cloud"></div>
+  <div class="cloud"></div>
+  <div class="cloud"></div>
+  <div class="cloud"></div>
+</div>
+<div class="frame-border"></div>
+<div class="frame-corner-tl"></div>
+<div class="frame-corner-tr"></div>
+<div class="frame-corner-bl"></div>
+<div class="frame-corner-br"></div>
+
+<!-- Splash -->
+<div id="splash">
+  <div class="splash-seal">
+    <div class="seal-text">汉韩桥</div>
+    <div class="seal-sub">· 學習之道 ·</div>
+  </div>
+  <div class="logo-area">
+    <div class="logo-chinese">學而時習之</div>
+    <div class="logo-sub">한국인을 위한 중국어 학습</div>
+  </div>
+  <div class="badge">📜 15문항 · 약 3분</div>
+  <button class="start-btn" onclick="startQuiz()">테스트 시작하기</button>
+  <div class="footer-note">내 한자 실력은 어느 정도일까?</div>
+</div>
+
+<!-- Main -->
+<div class="container" id="app">
+  <div class="header">
+    <div class="brand-wrap">
+      <div class="brand-seal"><span>汉韩</span></div>
+      <div class="brand-name">汉韩桥<span class="gold">.</span></div>
+    </div>
+    <div class="progress-text" id="progressText">一 / 十五</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <!-- Question Area -->
+  <div id="questionArea">
+    <div class="q-card" id="qCard">
+      <div class="q-label-wrap">
+        <span class="q-label"><span id="qDifficulty">초급</span> · 문제</span>
+        <span class="q-type" id="qType">한자 → 뜻</span>
+      </div>
+      <div class="hanzi-box">
+        <div class="hanzi-main" id="hanziDisplay">人</div>
+        <div class="hanzi-simple-wrap">
+          <span class="hanzi-label">번체</span>
+          <span class="hanzi-trad" id="tradDisplay">人</span>
+          <span class="hanzi-arrow">→</span>
+          <span class="hanzi-label">간체</span>
+          <span class="hanzi-simple" id="simpleDisplay">人</span>
+        </div>
+        <div class="hanja-kr" id="hanjaKrDisplay">(인)</div>
+        <div class="hint" id="hintText">아래에서 올바른 뜻을 골라보세요</div>
+      </div>
+      <div class="options" id="optionsContainer"></div>
+      <div class="reveal-area" id="revealArea">
+        <div class="pinyin" id="revealPinyin">rén</div>
+        <div class="meaning" id="revealMeaning">사람</div>
+        <div class="meaning-kr" id="revealMeaningKr">중국어로 '사람'이라는 뜻입니다</div>
+        <div class="reveal-forms" id="revealForms" style="display:none"></div>
+      </div>
+      <div class="next-btn-wrap">
+        <button class="next-btn" id="nextBtn">다음 문제 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result Area -->
+  <div id="result">
+    <div class="result-card">
+      <div class="seal-stamp"><div class="seal-char" id="resultSeal">甲</div></div>
+      <div class="result-emoji" id="resultEmoji">🎉</div>
+      <div class="result-score-wrap">
+        <svg class="result-score-svg" viewBox="0 0 160 160">
+          <circle class="bg-circle" cx="80" cy="80" r="68"/>
+          <circle class="fg-circle" id="scoreCircle" cx="80" cy="80" r="68"/>
+        </svg>
+        <div class="result-score-num"><span id="scoreNum">0</span><small>/15</small></div>
+      </div>
+      <div class="result-level" id="resultLevel">한자 초보자</div>
+      <div class="result-desc" id="resultDesc">당신의 한자 실력을 분석했습니다.</div>
+
+      <div class="result-stat">
+        <div class="result-stat-item">
+          <div class="num green" id="correctCount">0</div>
+          <div class="lbl">정답</div>
+        </div>
+        <div class="result-stat-item">
+          <div class="num red" id="wrongCount">0</div>
+          <div class="lbl">오답</div>
+        </div>
+      </div>
+
+      <div class="result-hanja-list" id="resultDetail">
+        <div class="title">📖 문제별 결과</div>
+        <div class="items" id="resultTags"></div>
+      </div>
+
+      <div class="result-share">
+        <button class="btn-kakao" onclick="shareKakao()">📱 카톡 공유</button>
+        <button class="btn-copy" onclick="copyResult()">📋 결과 복사</button>
+      </div>
+    </div>
+
+    <!-- Lead Capture -->
+    <div class="lead-form">
+      <h3>🎁 贈  한자 학습 가이드</h3>
+      <p>테스트 결과에 맞춘 맞춤 한자 학습 자료를 보내드립니다</p>
+      <div id="leadForm">
+        <input type="text" id="leadName" placeholder="이름 (선택)" autocomplete="name">
+        <input type="email" id="leadEmail" placeholder="이메일 주소" autocomplete="email">
+        <input type="text" id="leadKakao" placeholder="카카오톡 ID (선택)">
+        <button class="submit-btn" onclick="submitLead()">무료 자료 받기</button>
+      </div>
+      <div class="thank-you" id="thankYou">
+        <div class="emoji">✅</div>
+        <p>자료가 준비되었습니다.<br>입력하신 연락처로 보내드리겠습니다.</p>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      <span class="chinese">汉韩桥</span><span class="sep"></span>한국인 맞춤 AI 중국어 학습
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const questions = [
+  // 初級
+  { hanzi:'人', simple:'人', hanja:'인', meaning:'사람', pinyin:'rén', level:'초급', options:['사람','입','큰','열'], explain:'중국어로 \'사람\'을 뜻합니다' },
+  { hanzi:'大', simple:'大', hanja:'대', meaning:'크다', pinyin:'dà', level:'초급', options:['작다','크다','많다','좋다'], explain:'중국어로 \'크다\'를 뜻합니다' },
+  { hanzi:'山', simple:'山', hanja:'산', meaning:'산', pinyin:'shān', level:'초급', options:['물','불','산','땅'], explain:'중국어로 \'산\'을 뜻합니다' },
+  { hanzi:'水', simple:'水', hanja:'수', meaning:'물', pinyin:'shuǐ', level:'초급', options:['불','물','나무','돌'], explain:'중국어로 \'물\'을 뜻합니다' },
+  { hanzi:'火', simple:'火', hanja:'화', meaning:'불', pinyin:'huǒ', level:'초급', options:['물','바람','불','흙'], explain:'중국어로 \'불\'을 뜻합니다' },
+  // 中級
+  { hanzi:'學校', simple:'学校', hanja:'학교', meaning:'학교', pinyin:'xuéxiào', level:'중급', options:['병원','학교','집','시장'], explain:'배울 학(學) + 다닐 교(校), 중국어로 \'학교\'입니다' },
+  { hanzi:'友情', simple:'友情', hanja:'우정', meaning:'우정', pinyin:'yǒuqíng', level:'중급', options:['사랑','우정','가족','행복'], explain:'중국어로 \'우정\'을 뜻합니다' },
+  { hanzi:'時間', simple:'时间', hanja:'시간', meaning:'시간', pinyin:'shíjiān', level:'중급', options:['공간','시간','날씨','거리'], explain:'중국어로 \'시간\'을 뜻합니다. 시(時) + 간(間)' },
+  { hanzi:'幸福', simple:'幸福', hanja:'행복', meaning:'행복', pinyin:'xìngfú', level:'중급', options:['행복','슬픔','분노','피로'], explain:'중국어로 \'행복\'을 뜻합니다' },
+  { hanzi:'家族', simple:'家族', hanja:'가족', meaning:'가족', pinyin:'jiāzú', level:'중급', options:['친구','회사','가족','나라'], explain:'중국어로 \'가족\'을 뜻합니다' },
+  // 高級
+  { hanzi:'經濟', simple:'经济', hanja:'경제', meaning:'경제', pinyin:'jīngjì', level:'고급', options:['정치','경제','문화','역사'], explain:'경영할 경(經) + 건널 제(濟). 중국어로 \'경제\'입니다' },
+  { hanzi:'健康', simple:'健康', hanja:'건강', meaning:'건강', pinyin:'jiànkāng', level:'고급', options:['건강','질병','운동','휴식'], explain:'중국어로 \'건강\'을 뜻합니다' },
+  { hanzi:'發展', simple:'发展', hanja:'발전', meaning:'발전', pinyin:'fāzhǎn', level:'고급', options:['발전','후퇴','정지','변화'], explain:'중국어로 \'발전\'을 뜻합니다. 필 발(發) + 펼 전(展)' },
+  // 挑戰
+  { hanzi:'溫故知新', simple:'温故知新', hanja:'온고지신', meaning:'옛것을 익혀 새것을 앎', pinyin:'wēn gù zhī xīn', level:'도전',
+    options:['옛것을 익혀 새것을 앎','모르는 것을 아는 체함','배우고 때때로 익힘','친구와 함께 공부함'],
+    explain:'온고지신(溫故知新): 공자의 명언으로, 옛것을 익혀 새것을 깨달음을 뜻합니다' },
+  { hanzi:'克己復禮', simple:'克己复礼', hanja:'극기복례', meaning:'자기를 이기고 예로 돌아감', pinyin:'kè jǐ fù lǐ', level:'도전',
+    options:['자기를 이기고 예로 돌아감','자신을 극복하여 승리함','예절을 배워 익힘','타인을 이겨 존경받음'],
+    explain:'극기복례(克己復禮): 공자가 말한 인(仁)의 실천법. 자기를 극복하고 예절로 돌아간다는 뜻입니다' },
+];
+
+let current = 0;
+let score = 0;
+let results = [];
+let answered = false;
+
+function shuffle(arr) {
+  for (let i = arr.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function startQuiz() {
+  document.getElementById('splash').classList.add('hidden');
+  current = 0; score = 0; results = [];
+  renderQuestion();
+}
+
+function numToHan(n) {
+  const m = ['零','一','二','三','四','五','六','七','八','九','十','十一','十二','十三','十四','十五'];
+  return m[n] || n;
+}
+
+function renderQuestion() {
+  if (current >= questions.length) { showResult(); return; }
+  answered = false;
+  const q = questions[current];
+  document.getElementById('progressText').textContent = `${numToHan(current+1)} / 十五`;
+  document.getElementById('progressFill').style.width = `${(current/questions.length)*100}%`;
+  document.getElementById('qDifficulty').textContent = q.level;
+  document.getElementById('hanziDisplay').textContent = q.hanzi + (q.simple !== q.hanzi ? '' : '');
+  document.getElementById('tradDisplay').textContent = q.hanzi;
+  document.getElementById('simpleDisplay').textContent = q.simple;
+  document.getElementById('hanjaKrDisplay').textContent = `(${q.hanja})`;
+  document.getElementById('hintText').textContent = '아래에서 올바른 뜻을 골라보세요';
+  document.getElementById('revealArea').classList.remove('show');
+
+  const isWord = q.hanzi.length > 1;
+  document.getElementById('qType').textContent = isWord ? '단어→한글' : '한자→뜻';
+
+  const labels = ['一','二','三','四'];
+  const opts = document.getElementById('optionsContainer');
+  opts.innerHTML = '';
+  shuffle(q.options).forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="label">${labels[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectOption(btn, opt);
+    opts.appendChild(btn);
+  });
+
+  const nb = document.getElementById('nextBtn');
+  nb.classList.remove('active');
+  nb.textContent = current === questions.length-1 ? '결과 보기 →' : '다음 문제 →';
+  nb.onclick = nextQuestion;
+
+  const card = document.getElementById('qCard');
+  card.style.animation = 'none';
+  setTimeout(() => card.style.animation = 'fadeIn .4s ease', 10);
+}
+
+function selectOption(btn, selected) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const isCorrect = selected === q.meaning;
+  const allBtns = document.querySelectorAll('.option');
+
+  allBtns.forEach(b => b.classList.add('disabled'));
+  btn.classList.add(isCorrect ? 'correct' : 'wrong');
+  if (isCorrect) score++;
+
+  allBtns.forEach(b => {
+    const text = b.querySelector('span:last-child').textContent;
+    if (text === q.meaning) b.classList.add('correct');
+  });
+
+  results.push({ hanzi: q.hanzi, simple: q.simple, correct: isCorrect, meaning: q.meaning, hanja: q.hanja });
+
+  const rv = document.getElementById('revealArea');
+  rv.classList.add('show');
+  document.getElementById('revealPinyin').textContent = q.pinyin;
+  document.getElementById('revealMeaning').textContent = q.meaning;
+  document.getElementById('revealMeaningKr').textContent = q.explain;
+
+  if (q.hanzi !== q.simple) {
+    const rf = document.getElementById('revealForms');
+    rf.style.display = 'block';
+    rf.style.marginTop = '.8rem'; rf.style.paddingTop = '.8rem'; rf.style.borderTop = '1px solid rgba(201,168,76,.2)';
+    rf.style.fontSize = '.8rem'; rf.style.color = 'var(--text-light)';
+    rf.innerHTML = `번체 <b style="color:var(--ink);font-family:\'Noto Serif SC\',serif;">${q.hanzi}</b> → 간체 <b style="color:var(--vermillion);font-family:\'Noto Serif SC\',serif;">${q.simple}</b>`;
+  } else {
+    document.getElementById('revealForms').style.display = 'none';
+  }
+
+  document.getElementById('hintText').textContent = isCorrect ? '✅ 정답입니다' : '❌ 틀렸습니다';
+
+  document.getElementById('nextBtn').classList.add('active');
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) { showResult(); return; }
+  renderQuestion();
+}
+
+function showResult() {
+  document.getElementById('questionArea').style.display = 'none';
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('result').classList.add('show');
+
+  const num = score;
+  document.getElementById('scoreNum').textContent = num;
+  document.getElementById('correctCount').textContent = num;
+  document.getElementById('wrongCount').textContent = 15 - num;
+
+  const circ = document.getElementById('scoreCircle');
+  const totalLen = 427.26;
+  const offset = totalLen - (num/15) * totalLen;
+  setTimeout(() => { circ.style.strokeDashoffset = offset; }, 300);
+
+  let emoji, level, desc, seal;
+  if (num <= 3) {
+    emoji='🌱'; seal='生';
+    level='한자 새싹';
+    desc='이제 시작입니다. 하지만 걱정 마세요! 한국어 어휘의 60% 이상이 한자어입니다. 이미 알고 계신 한자를 떠올리며 차근차근 익혀보세요.';
+  } else if (num <= 6) {
+    emoji='🌿'; seal='學';
+    level='한자 입문자';
+    desc='기초를 다져가는 중입니다. 한걸음씩 나아가면 반드시 늘어요. 매일 5분만 투자해보세요.';
+  } else if (num <= 9) {
+    emoji='🌳'; seal='習';
+    level='한자 중급자';
+    desc='제법 알고 계십니다! 일상생활에서 자주 쓰는 한자는 어느 정도 정복하셨네요. 이제 HSK에 도전해보세요.';
+  } else if (num <= 12) {
+    emoji='🏛️'; seal='達';
+    level='한자 고수';
+    desc='훌륭합니다! 상당한 한자 실력을 갖추고 계십니다. 사자성어와 고전 한문에도 도전해볼 만한 수준입니다.';
+  } else {
+    emoji='👑'; seal='甲';
+    level='한자 마스터';
+    desc='대단합니다! 거의 모든 한자를 완벽하게 알고 계십니다. 공자도 칭찬할 실력이에요. 함께 중국어에 도전해보세요!';
+  }
+
+  document.getElementById('resultSeal').textContent = seal;
+  document.getElementById('resultEmoji').textContent = emoji;
+  document.getElementById('resultLevel').textContent = level;
+  document.getElementById('resultDesc').textContent = desc;
+
+  const tags = document.getElementById('resultTags');
+  tags.innerHTML = '';
+  results.forEach(r => {
+    const tag = document.createElement('span');
+    tag.className = `tag ${r.correct ? 'correct' : 'wrong'}`;
+    const same = r.hanzi === r.simple;
+    tag.textContent = same
+      ? `${r.hanzi}(${r.hanja}) ${r.correct ? '○' : '×'}`
+      : `${r.hanzi}→${r.simple}(${r.hanja}) ${r.correct ? '○' : '×'}`;
+    tags.appendChild(tag);
+  });
+}
+
+function copyResult() {
+  const num = score;
+  let level;
+  if (num <= 3) level = '🌱 한자 새싹';
+  else if (num <= 6) level = '🌿 한자 입문자';
+  else if (num <= 9) level = '🌳 한자 중급자';
+  else if (num <= 12) level = '🏛️ 한자 고수';
+  else level = '👑 한자 마스터';
+
+  const text = `【 한자 실력 테스트 결과 】\n\n점수: ${num}/15\n등급: ${level}\n\n「學而時習之」한국인 맞춤 중국어 학습, 汉韩桥에서 시작하세요!`;
+  navigator.clipboard.writeText(text).then(() => showToast('📋 결과가 복사되었습니다! 카카오톡에 붙여넣기 하세요.'));
+}
+
+function shareKakao() {
+  const num = score;
+  let level;
+  if (num <= 3) level = '한자 새싹 🌱';
+  else if (num <= 6) level = '한자 입문자 🌿';
+  else if (num <= 9) level = '한자 중급자 🌳';
+  else if (num <= 12) level = '한자 고수 🏛️';
+  else level = '한자 마스터 👑';
+
+  const text = `📜 나의 한자 실력: ${num}/15점 (${level})\n\n너는 몇 점 나올까? 도전해봐!`;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('📱 공유 문구가 복사되었습니다! 카카오톡에 붙여넣기 하세요.');
+    window.open('https://accounts.kakao.com/login?continue=https://talk.kakao.com', '_blank');
+  });
+}
+
+function submitLead() {
+  const name = document.getElementById('leadName').value.trim();
+  const email = document.getElementById('leadEmail').value.trim();
+  const kakao = document.getElementById('leadKakao').value.trim();
+
+  if (!email && !kakao) {
+    showToast('이메일 또는 카카오톡 ID를 입력해주세요');
+    return;
+  }
+
+  const btn = document.querySelector('.lead-form .submit-btn');
+  btn.classList.add('loading');
+  btn.textContent = '전송 중...';
+
+  const data = {
+    type: 'hanja_test_lead',
+    score: score,
+    level: getLevelText(),
+    name: name || '(미기입)',
+    email: email || '(미기입)',
+    kakao: kakao || '(미기입)',
+    timestamp: new Date().toISOString(),
+  };
+  console.log('Lead collected:', data);
+
+  setTimeout(() => {
+    btn.classList.remove('loading');
+    btn.style.display = 'none';
+    document.getElementById('leadForm').style.display = 'none';
+    document.getElementById('thankYou').classList.add('show');
+    showToast('✅ 자료 신청이 완료되었습니다!');
+  }, 800);
+}
+
+function getLevelText() {
+  const num = score;
+  if (num <= 3) return '🌱 한자 새싹';
+  if (num <= 6) return '🌿 한자 입문자';
+  if (num <= 9) return '🌳 한자 중급자';
+  if (num <= 12) return '🏛️ 한자 고수';
+  return '👑 한자 마스터';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
